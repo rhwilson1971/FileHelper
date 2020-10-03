@@ -17,9 +17,9 @@
             <RowDefinition/>
         </Grid.RowDefinitions>
         <Button Content="Button" Grid.Column="1" HorizontalAlignment="Left" Margin="32.2,37,0,0" VerticalAlignment="Top" Width="75"/>
-        <ListBox HorizontalAlignment="Left" Height="354" Margin="10,56,0,0" VerticalAlignment="Top" Width="365" Grid.RowSpan="2" ItemsSource="{Binding FileData, ElementName=Key, Mode=OneWay}"/>
+        <ListBox HorizontalAlignment="Left" Height="354" Margin="10,56,0,0" VerticalAlignment="Top" Width="377" Grid.RowSpan="2" ItemsSource="{Binding FileData, ElementName=Key, Mode=OneWay}"/>
         <Button Content="Button" Grid.Column="1" HorizontalAlignment="Left" Margin="62.2,90,0,0" VerticalAlignment="Top" Width="75"/>
-        <TextBox HorizontalAlignment="Left" Height="23" Margin="10,10,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="297"/>
-        <Button Content="Button" Command="{Binding GetFolderCommand}"  HorizontalAlignment="Left" Margin="312,10,0,0" VerticalAlignment="Top" Width="75"/>
+        <TextBox HorizontalAlignment="Left" Height="23" Margin="10,10,0,0" TextWrapping="Wrap" Text="{Binding FilePath, Mode=OneWay}" VerticalAlignment="Top" Width="297"/>
+        <Button Content="Folder" Command="{Binding GetFolderCommand}"  HorizontalAlignment="Left" Margin="312,10,0,0" VerticalAlignment="Top" Width="75" Height="23"/>
     </Grid>
 </Window>
