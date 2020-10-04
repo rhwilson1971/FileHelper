@@ -9,14 +9,72 @@ using Microsoft.Win32;
 using System.ComponentModel;
 using System.Windows.Input;
 using System.Runtime.CompilerServices;
+using System.Collections.ObjectModel;
+using System.Runtime.InteropServices.WindowsRuntime;
 
 namespace FileHelper
 {
-    public class FileHelperViewModel : INotifyPropertyChanged
+    public class NotificationObject : INotifyPropertyChanged
     {
-        private readonly Dictionary<string, string> _fileData;
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        protected void OnPropertyChanged([CallerMemberName] string propertyName = "")
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+
+    public class FileHelperData : NotificationObject
+    {
+        private string _fileName;
+        public string FileName {
+            get
+            {
+                return _fileName;
+            }
+            set
+            {
+                _fileName = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private string _oldFilePath;
+        public string OldFilePath
+        {
+            get
+            {
+                return _oldFilePath;
+            }
+
+            set
+            {
+                _oldFilePath = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private string _newFilePath;
+        public string NewFilePath {
+            get
+            {
+                return _newFilePath;
+            }
+
+            set
+            {
+                _newFilePath = value;
+                OnPropertyChanged();
+            }
+        }
+    }
+
+    public class FileHelperViewModel : NotificationObject
+    {
         public ICommand GetFilesCommand { get; set;  }
         public ICommand GetFolderCommand { get; set; }
+
+        private readonly ObservableCollection<FileHelperData> _fileData;
 
         private string _filePath;
         private int _fileCount;
@@ -41,14 +99,8 @@ namespace FileHelper
             }
         }
 
-        public event PropertyChangedEventHandler PropertyChanged;
 
-        protected void OnPropertyChanged([CallerMemberName] string propertyName = "")
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-
-        public Dictionary<string, string> FileData
+        public ObservableCollection<FileHelperData> FileData
         {
             get
             {
@@ -58,7 +110,7 @@ namespace FileHelper
 
         public FileHelperViewModel()
         {
-            _fileData = new Dictionary<string, string>();
+            _fileData = new ObservableCollection<FileHelperData>();
 
             GetFilesCommand = new RelayCommand(GetFiles, CanGetFiles);
 
@@ -76,12 +128,16 @@ namespace FileHelper
 
             try
             {
-
                 if (Directory.Exists(FilePath))
                 {
                     foreach (var file in Directory.EnumerateFiles(FilePath))
                     {
-                        _fileData.Add(file, file);
+                        _fileData.Add(new FileHelperData()
+                        {
+                            FileName = Path.GetFileName(file),
+                            OldFilePath = file,
+                            NewFilePath = file
+                        });
                     }
                 }
             }
@@ -98,17 +154,17 @@ namespace FileHelper
 
         private void GetFolder(object parameter)
         {
-            var dialog = new CommonOpenFileDialog();
+            var dialog = new CommonOpenFileDialog
+            {
+                InitialDirectory = Directory.GetCurrentDirectory(),
+                IsFolderPicker = true
+            };
 
-
-            dialog.InitialDirectory = Directory.GetCurrentDirectory();
-            dialog.IsFolderPicker = true;
-
-            var result =
-                dialog.ShowDialog();
+            var result = dialog.ShowDialog();
 
             if (result == CommonFileDialogResult.Ok)
             {
+                FileData.Clear();
                 FilePath = dialog.FileName;
             }
         }

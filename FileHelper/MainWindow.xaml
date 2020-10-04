@@ -16,10 +16,33 @@
             <RowDefinition/>
             <RowDefinition/>
         </Grid.RowDefinitions>
-        <Button Content="Button" Grid.Column="1" HorizontalAlignment="Left" Margin="32.2,37,0,0" VerticalAlignment="Top" Width="75"/>
-        <ListBox HorizontalAlignment="Left" Height="354" Margin="10,56,0,0" VerticalAlignment="Top" Width="377" Grid.RowSpan="2" ItemsSource="{Binding FileData, ElementName=Key, Mode=OneWay}"/>
-        <Button Content="Button" Grid.Column="1" HorizontalAlignment="Left" Margin="62.2,90,0,0" VerticalAlignment="Top" Width="75"/>
+
+        <Button Content="Get Files" 
+                Grid.Column="1" 
+                HorizontalAlignment="Left" 
+                Margin="10.2,10,0,0" 
+                VerticalAlignment="Top" 
+                Width="75" 
+                Height="23"
+                Command="{Binding GetFilesCommand}"
+                />
+
+        <ListBox Margin="10,56,9.8,10" Grid.RowSpan="2" ItemsSource="{Binding FileData}" DisplayMemberPath="FileName"/>
+        <Button Content="Button" Grid.Column="1" HorizontalAlignment="Left" Margin="102.2,12,0,0" VerticalAlignment="Top" Width="75"/>
         <TextBox HorizontalAlignment="Left" Height="23" Margin="10,10,0,0" TextWrapping="Wrap" Text="{Binding FilePath, Mode=OneWay}" VerticalAlignment="Top" Width="297"/>
-        <Button Content="Folder" Command="{Binding GetFolderCommand}"  HorizontalAlignment="Left" Margin="312,10,0,0" VerticalAlignment="Top" Width="75" Height="23"/>
+        <Button Content="Folder" Command="{Binding GetFolderCommand}" Margin="312,10,9.8,0" VerticalAlignment="Top" Height="23"/>
+        <ListBox Grid.Column="1" Margin="10.2,56,9.6,10" Grid.RowSpan="2"
+                 ItemsSource="{Binding FileData}"
+                 >
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel>
+                        <TextBlock Text="{Binding Path=FileName}" />
+                        <TextBlock Text="Hello 2" />
+                        <TextBlock Text="Hello 3" />
+                    </StackPanel>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
     </Grid>
 </Window>
