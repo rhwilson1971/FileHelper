@@ -26,8 +26,21 @@ namespace FileHelper
 
     public class FileHelperData : NotificationObject
     {
+        private bool _IsDirectory;
+
+        public bool IsDirectory
+        {
+            get { return _IsDirectory; }
+            set
+            {
+                _IsDirectory = value;
+                OnPropertyChanged();
+            }
+        }
+
         private string _fileName;
-        public string FileName {
+        public string FileName
+        {
             get
             {
                 return _fileName;
@@ -55,7 +68,8 @@ namespace FileHelper
         }
 
         private string _newFilePath;
-        public string NewFilePath {
+        public string NewFilePath
+        {
             get
             {
                 return _newFilePath;
@@ -71,8 +85,12 @@ namespace FileHelper
 
     public class FileHelperViewModel : NotificationObject
     {
-        public ICommand GetFilesCommand { get; set;  }
+        #region Public Variables
+        public ICommand GetFilesCommand { get; set; }
+        
         public ICommand GetFolderCommand { get; set; }
+
+        public ICommand ClearCommand { get; set; }
 
         private readonly ObservableCollection<FileHelperData> _fileData;
 
@@ -89,16 +107,15 @@ namespace FileHelper
             }
         }
 
-        public string FilePath 
+        public string FilePath
         {
-            get { return _filePath;  }
+            get { return _filePath; }
             private set
             {
                 _filePath = value;
                 OnPropertyChanged();
             }
         }
-
 
         public ObservableCollection<FileHelperData> FileData
         {
@@ -107,20 +124,24 @@ namespace FileHelper
                 return _fileData;
             }
         }
+        #endregion
 
+        #region Constructors    
         public FileHelperViewModel()
         {
             _fileData = new ObservableCollection<FileHelperData>();
 
-            GetFilesCommand = new RelayCommand(GetFiles, CanGetFiles);
+            GetFilesCommand = new RelayCommand(GetFiles, (o) => { return true; });
 
-            GetFolderCommand = new RelayCommand(GetFolder, CanGetFolder);
+            GetFolderCommand = new RelayCommand(GetFolder, (o) => { return true; } );
+
+            ClearCommand = new RelayCommand(Clear, (o) => { return true; });
 
             FilePath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
         }
+        #endregion
 
-        private bool CanGetFiles(object parameter) { return true;  }
-
+        #region Command Interface methods
         public void GetFiles(object parameter)
         {
             if (FilePath.Length == 0)
@@ -143,13 +164,8 @@ namespace FileHelper
             }
             catch (FileNotFoundException ex)
             {
-
+                System.Diagnostics.Trace.WriteLine(ex.Message);
             }
-        }
-
-        private bool CanGetFolder(object parameter)
-        {
-            return true;
         }
 
         private void GetFolder(object parameter)
@@ -168,5 +184,12 @@ namespace FileHelper
                 FilePath = dialog.FileName;
             }
         }
+
+        private void Clear(object parameter)
+        {
+            FileData.Clear();
+        }
+
+        #endregion
     }
 }
